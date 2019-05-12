@@ -32,9 +32,9 @@ _.mapValues(routes, (value, key) => {
   router.use('/' + path, value);
 });
 
-router.use('/', function(req, res){
-	res.send("Up and running!");
-})
+router.use('/', function (req, res) {
+  res.send("Up and running!");
+});
 
 app.use(router);
 
