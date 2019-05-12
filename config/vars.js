@@ -20,5 +20,10 @@ module.exports = {
     port: process.env.DB_PORT,
     name: process.env.DB_NAME
   },
+  auth: {
+    jwt: {
+      secret: process.env.SECRET
+    }
+  },
   logs: process.env.NODE_ENV === 'production' ? 'combined' : 'dev'
 };
