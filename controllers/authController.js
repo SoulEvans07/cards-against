@@ -11,7 +11,7 @@ const signToken = user => jwt.sign(
 );
 
 exports.login = async (req, res) => {
-  const user = await User.findOne({where:{ username: entities.encode(req.body.username) }});
+  const user = await User.findOne({ where: { username: entities.encode(req.body.username) } });
 
   if (!user)
     return res.status(404).send('User not found');
@@ -19,7 +19,7 @@ exports.login = async (req, res) => {
   const match = await bcrypt.compare(req.body.password, user.password);
 
   if (match) {
-    const token = signToken(_.pick(user, [ '_id', 'email', 'username', 'is_admin' ]));
+    const token = signToken(_.pick(user, ['_id', 'email', 'username', 'is_admin']));
     user.password = undefined;
     return res.status(200).send({ user, token });
   }
@@ -27,10 +27,44 @@ exports.login = async (req, res) => {
   return res.status(403).send('Bad credentials!');
 };
 
+exports.authenticate = async (req, res, next) => {
+  try {
+    let token = jwt.verify(req.headers.authorization, process.env.SECRET);
+    const userId = _.get(token, 'user._id');
+    if (userId) {
+      const currentUser = await User.findOne({ where: { id: userId } });
+      currentUser.password = undefined;
+      res.currentUser = currentUser;
+    }
+    return next();
+  } catch (e) {
+    console.error('Error verifying token');
+    return res.status(403).send();
+  }
+};
+
+exports.refreshToken = async (req, res, next) => {
+  let token = req.headers.authorization;
+  try {
+    token = jwt.verify(token, process.env.SECRET, { ignoreExpiration: true });
+    const userId = _.get(token, 'user._id');
+    if (userId) {
+      const currentUser = await User.findOne({ where: { id: userId } });
+      token = signToken(_.pick(currentUser, ['_id', 'email', 'username',]));
+      currentUser.password = undefined;
+      return res.status(200).send({ user: currentUser, token });
+    }
+  } catch (e) {
+    console.error('Error verifying token', e);
+    return res.status(403).send();
+  }
+  return res.status(403).send();
+};
+
 exports.register = async (req, res) => {
   try {
     if ((typeof req.body === 'undefined') || (typeof req.body.username === 'undefined') ||
-      (typeof req.body.password === 'undefined') || (typeof req.body.email === 'undefined')){
+      (typeof req.body.password === 'undefined') || (typeof req.body.email === 'undefined')) {
       return res.status(500).send('Missing arguments!');
     }
 
@@ -41,16 +75,16 @@ exports.register = async (req, res) => {
       });
     }
 
-    let email_taken = await User.findOne({where: {email: req.body.email}});
-    if(email_taken){
+    let email_taken = await User.findOne({ where: { email: req.body.email } });
+    if (email_taken) {
       return res.status(500).send({
         field: "email",
         message: 'There is already an account with that email.'
       });
     }
 
-    let name_taken = await User.findOne({where: {username: req.body.username}});
-    if(name_taken){
+    let name_taken = await User.findOne({ where: { username: req.body.username } });
+    if (name_taken) {
       return res.status(500).send({
         field: "username",
         message: 'The username is taken.'
