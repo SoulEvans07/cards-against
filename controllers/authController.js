@@ -35,8 +35,26 @@ exports.register = async (req, res) => {
     }
 
     if (req.body.username.length < 3) {
-      console.error('The username should be at least 3 characters!');
-      return res.status(500).send('The username should be at least 3 characters!');
+      return res.status(500).send({
+        field: "username",
+        message: 'The username should be at least 3 characters!'
+      });
+    }
+
+    let email_taken = await User.findOne({where: {email: req.body.email}});
+    if(email_taken){
+      return res.status(500).send({
+        field: "email",
+        message: 'There is already an account with that email.'
+      });
+    }
+
+    let name_taken = await User.findOne({where: {username: req.body.username}});
+    if(name_taken){
+      return res.status(500).send({
+        field: "username",
+        message: 'The username is taken.'
+      });
     }
 
     let user = await User.create({
@@ -50,6 +68,8 @@ exports.register = async (req, res) => {
     return res.status(200).send(user);
   } catch (e) {
     console.error('Error creating user', e);
-    return res.status(500).send(e.message);
+    return res.status(500).send({
+      message: e.message
+    });
   }
 };

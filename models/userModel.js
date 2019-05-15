@@ -10,7 +10,7 @@ const User = db.define('User', {
 });
 
 User.beforeCreate((user, options) => {
-  return bcrypt.hash(user.password, 10)
+  return bcrypt.hash(user.password, bcrypt.genSaltSync(10))
     .then(hash => {
       user.password = hash;
     })
