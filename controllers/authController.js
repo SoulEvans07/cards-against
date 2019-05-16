@@ -14,7 +14,7 @@ exports.login = async (req, res) => {
   const user = await User.findOne({ where: { username: entities.encode(req.body.username) } });
 
   if (!user)
-    return res.status(404).send('User not found');
+    return res.status(403).send({ message: 'Invalid username or password!' });
 
   const match = await bcrypt.compare(req.body.password, user.password);
 
@@ -24,7 +24,7 @@ exports.login = async (req, res) => {
     return res.status(200).send({ user, token });
   }
 
-  return res.status(403).send('Bad credentials!');
+  return res.status(403).send({ message: 'Invalid username or password!' });
 };
 
 exports.authenticate = async (req, res, next) => {
