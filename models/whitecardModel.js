@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
       through: 'DeckWhiteCards',
       foreignKey: 'whiteId'
     });
+    // models.WhiteCard.belongsToMany(models.Player, {
+    //   as: 'player',
+    //   through: 'PlayerHand',
+    //   foreignKey: 'cardId'
+    // });
   };
 
   return WhiteCard;

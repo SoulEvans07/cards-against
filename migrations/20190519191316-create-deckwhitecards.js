@@ -5,11 +5,13 @@ module.exports = {
     return queryInterface.createTable('DeckWhiteCards', {
       deckId: {
         type: Sequelize.INTEGER,
-        primaryKey: true
+        primaryKey: true,
+        references: { model: 'Decks', key: 'id' }
       },
       whiteId: {
         type: Sequelize.INTEGER,
-        primaryKey: true
+        primaryKey: true,
+        references: { model: 'WhiteCards', key: 'id' }
       }
     });
   },

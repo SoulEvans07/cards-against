@@ -6,12 +6,14 @@ module.exports = {
       playerId: {
         type: Sequelize.INTEGER,
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
+        references: { model: 'Players', key: 'id' }
       },
-      cardId: {
+      WhiteCardId: {
         type: Sequelize.INTEGER,
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
+        references: { model: 'WhiteCards', key: 'id' }
       }
     });
   },
