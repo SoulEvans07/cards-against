@@ -3,7 +3,7 @@ const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 
 router.get('/list',
-  authController.authenticate,
+  // authController.authenticate,
   userController.list
 );
 

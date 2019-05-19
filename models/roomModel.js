@@ -1,16 +1,23 @@
-const Sequelize = require('sequelize');
-const db = require('../config/db');
+module.exports = (sequelize, DataTypes) => {
+  const Room = sequelize.define('Room', {
+    name: DataTypes.STRING,
+    visibility: DataTypes.INTEGER
+  });
 
-const Room = db.define('Room', {
-  name: Sequelize.STRING,
-  visibility: Sequelize.INTEGER,
+  Room.associate = function (models) {
+    models.Room.belongsTo(models.User, {
+      as: 'creator',
+      foreignKey: 'creatorId'
+    });
+    models.Room.belongsTo(models.Player, {
+      as: 'czar',
+      foreignKey: 'czarId'
+    });
+    models.Room.hasMany(models.Player, {
+      as: 'players',
+      foreignKey: 'roomId'
+    });
+  };
 
-});
-
-Room.associate = function (models) {
-  Room.hasOne(models.User, { as: 'creator', foreignKey: 'creatorId' });
-  Room.hasOne(models.Player, { as: 'czar', foreignKey: 'czarId' });
-  Room.hasMany(models.Player, { as: 'players', through: 'RoomPlayers', foreignKey: 'roomId'})
+  return Room;
 };
-
-module.exports = Room;

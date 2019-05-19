@@ -4,20 +4,29 @@
     "password": null,
     "database": "cardsagainst_dev",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "define": {
+      "timestamps": false
+    }
   },
   "test": {
     "username": "postgres",
     "password": null,
     "database": "cardsagainst_test",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "define": {
+      "timestamps": false
+    }
   },
   "production": {
     "username": "postgres",
     "password": null,
     "database": "cardsagainst_prod",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "define": {
+      "timestamps": false
+    }
   }
 }

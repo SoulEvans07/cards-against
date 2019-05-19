@@ -1,13 +1,19 @@
-const Sequelize = require('sequelize');
-const db = require('../config/db');
+module.exports = (sequelize, DataTypes) => {
+  const WhiteCard = sequelize.define('WhiteCard', {
+    text: DataTypes.STRING,
+  });
 
-const WhiteCard = db.define('WhiteCard', {
-  text: Sequelize.STRING,
-});
+  WhiteCard.associate = function (models) {
+    models.WhiteCard.belongsTo(models.User, {
+      as: 'creator',
+      foreignKey: 'creatorId'
+    });
+    models.WhiteCard.belongsToMany(models.Deck, {
+      as: 'deck',
+      through: 'DeckWhiteCards',
+      foreignKey: 'whiteId'
+    });
+  };
 
-WhiteCard.associate = function (models) {
-  WhiteCard.hasOne(models.User, { as: 'creator', foreignKey: 'creatorId' });
-  WhiteCard.belongsToMany(models.Deck, {as: 'deck', through: 'DeckWhiteCards', foreignKey: 'whiteId'});
+  return WhiteCard;
 };
-
-module.exports = WhiteCard;

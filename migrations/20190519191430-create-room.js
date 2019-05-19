@@ -25,7 +25,7 @@ module.exports = {
       },
       czarId: {
         type: Sequelize.INTEGER,
-        references: { model: 'Users', key: 'id' }
+        references: { model: 'Players', key: 'id' }
       }
     });
   },

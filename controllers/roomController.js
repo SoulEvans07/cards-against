@@ -1,8 +1,9 @@
-const Room = require('../models/roomModel');
+const { User, Room } = require('../models');
 
 exports.list = async (req, res) => {
   try {
-    let list = await Room.findAll({});
+    let list = await Room.findAll({ include: [{ all: true }] });
+    // let list = await Room.findAll({});
 
     return res.status(200).send(list);
   } catch (e) {

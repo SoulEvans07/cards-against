@@ -1,14 +1,20 @@
-const Sequelize = require('sequelize');
-const db = require('../config/db');
+module.exports = (sequelize, DataTypes) => {
+  const BlackCard = sequelize.define('BlackCard', {
+    text: DataTypes.STRING,
+    pick: DataTypes.INTEGER
+  });
 
-const BlackCard = db.define('BlackCard', {
-  text: Sequelize.STRING,
-  pick: Sequelize.INTEGER
-});
+  BlackCard.associate = function (models) {
+    models.BlackCard.belongsTo(models.User, {
+      as: 'creator',
+      foreignKey: 'creatorId'
+    });
+    models.BlackCard.belongsToMany(models.Deck, {
+      as: 'deck',
+      through: 'DeckBlackCards',
+      foreignKey: 'blackId'
+    });
+  };
 
-BlackCard.associate = function (models) {
-  BlackCard.hasOne(models.User, { as: 'creator', foreignKey: 'creatorId' });
-  BlackCard.belongsToMany(models.Deck, {as: 'deck', through: 'DeckBlackCards', foreignKey: 'blackId'});
+  return BlackCard;
 };
-
-module.exports = BlackCard;

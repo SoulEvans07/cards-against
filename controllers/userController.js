@@ -1,8 +1,8 @@
-const User = require('../models/userModel');
+const { User } = require('../models');
 
 exports.list = async (req, res) => {
   try {
-    let list = await User.findAll({});
+    let list = await User.findAll({ include: [{ all: true }] });
 
     list.forEach(user => {
       user.password = undefined;

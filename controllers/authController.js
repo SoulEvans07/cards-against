@@ -2,7 +2,7 @@ const entities = require('html-entities').AllHtmlEntities;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const User = require('../models/userModel');
+const { User } = require('../models');
 
 const signToken = user => jwt.sign(
   { user },
