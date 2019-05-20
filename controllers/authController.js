@@ -19,7 +19,7 @@ exports.login = async (req, res) => {
   const match = await bcrypt.compare(req.body.password, user.password);
 
   if (match) {
-    const token = signToken(_.pick(user, ['_id', 'email', 'username', 'is_admin']));
+    const token = signToken(_.pick(user, ['id', 'email', 'username']));
     user.password = undefined;
     return res.status(200).send({ user, token });
   }
@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
 exports.authenticate = async (req, res, next) => {
   try {
     let token = jwt.verify(req.headers.authorization, process.env.SECRET);
-    const userId = _.get(token, 'user._id');
+    const userId = _.get(token, 'user.id');
     if (userId) {
       const currentUser = await User.findOne({ where: { id: userId } });
       currentUser.password = undefined;
@@ -50,7 +50,7 @@ exports.refreshToken = async (req, res, next) => {
     const userId = _.get(token, 'user._id');
     if (userId) {
       const currentUser = await User.findOne({ where: { id: userId } });
-      token = signToken(_.pick(currentUser, ['_id', 'email', 'username',]));
+      token = signToken(_.pick(currentUser, ['id', 'email', 'username']));
       currentUser.password = undefined;
       return res.status(200).send({ user: currentUser, token });
     }
