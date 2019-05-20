@@ -1,5 +1,5 @@
 const entities = require('html-entities').AllHtmlEntities;
-const { Room } = require('../models');
+const { Room, Player } = require('../models');
 
 exports.list = async (req, res) => {
   try {
@@ -19,6 +19,14 @@ exports.create = async (req, res) => {
       visibility: req.body.visibility,        // todo: check if over the range
       creatorId: res.currentUser.id
     });
+
+    let player = await Player.create({
+      userId: res.currentUser.id,
+      roomId: room.id
+    });
+
+    room.czarId = player.id;
+    room.save();
 
     return res.status(200).send(room);
   } catch (e) {
