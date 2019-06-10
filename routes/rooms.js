@@ -12,4 +12,9 @@ router.post('/new',
   roomController.create
 );
 
+router.post('/:id/join',
+  authController.authenticate,
+  roomController.join
+);
+
 module.exports = router;

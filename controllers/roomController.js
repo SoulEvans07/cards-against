@@ -34,3 +34,37 @@ exports.create = async (req, res) => {
     return res.status(500).send(e.message)
   }
 };
+
+exports.join = async (req, res) => {
+  try {
+    let room = await Room.findOne(
+      { where: { id: req.params.id } },
+      { include: [{ all: true, nested: true }] }
+    );
+
+    if(room === null){
+      console.error('[ERROR] Room.join(' + req.params.id + ')\n    ',
+        "Room with id '"+req.params.id+"' not found!");
+      return res.status(500).send(e.message)
+    }
+
+    let player = await Player.findOne({
+      where: {
+        userId: res.currentUser.id,
+        roomId: room.id
+      }
+    });
+
+    if (player === null) {
+      await Player.create({
+        userId: res.currentUser.id,
+        roomId: room.id
+      });
+    }
+
+    return res.status(200).send(room);
+  } catch (e) {
+    console.error('[ERROR] Room.join(' + req.params.id + ')\n    ', e.message);
+    return res.status(500).send(e.message);
+  }
+};
